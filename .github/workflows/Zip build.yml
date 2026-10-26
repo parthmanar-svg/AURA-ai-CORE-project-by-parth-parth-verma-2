@@ -25,6 +25,16 @@ jobs:
           sed -i 's/ package="com.core.ai"//' app/src/main/AndroidManifest.xml
           echo "sdk.dir=$ANDROID_HOME" > local.properties
 
+      - name: Enable AndroidX for CI build
+        working-directory: COREAndroid-AIDE
+        run: |
+          if [ -f gradle.properties ]; then
+            grep -qxF 'android.useAndroidX=true' gradle.properties || echo 'android.useAndroidX=true' >> gradle.properties
+            grep -qxF 'android.enableJetifier=true' gradle.properties || echo 'android.enableJetifier=true' >> gradle.properties
+          else
+            printf '%s\n' 'android.useAndroidX=true' 'android.enableJetifier=true' > gradle.properties
+          fi
+
       - name: Create Gradle wrapper
         working-directory: COREAndroid-AIDE
         run: gradle wrapper --gradle-version 8.7
